@@ -18,6 +18,8 @@
                 <MenuFlyoutItem Name="FileOpenBtn" Text="Open" />
                 <MenuFlyoutItem Name="FileSaveBtn" Text="Save" />
                 <MenuFlyoutItem Name="FileSaveAsBtn" Text="Save as" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Name="FileExitBtn" Text="Exit" />
             </MenuBarItem>
             <MenuBarItem Title="Map">
                 <MenuFlyoutItem Name="MapResetBtn" Text="Reset" />
