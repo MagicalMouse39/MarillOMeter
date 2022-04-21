@@ -52,10 +52,10 @@ namespace MarillOMeter
             }
 
             this.FileOpenBtn.Click += (s, e) =>
-                this.LoadTrack();
+                this.LoadTrackFile();
         }
 
-        private async void LoadTrack()
+        private async void LoadTrackFile()
         {
             FileOpenPicker picker = new FileOpenPicker();
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
@@ -63,7 +63,14 @@ namespace MarillOMeter
 
             StorageFile file = await picker.PickSingleFileAsync();
 
-            var trackSource = new GpxTrackSource(file);
+            TrackSourceBase trackSource = default;
+
+            switch (file.FileType)
+            {
+                case ".gpx":
+                    trackSource = new GpxTrackSource(file);
+                    break;
+            }
 
             var polyline = new MapPolyline();
             polyline.StrokeColor = Colors.Red;
@@ -75,6 +82,15 @@ namespace MarillOMeter
             Map.MapElements.Add(polyline);
 
             this.tracks.Add(track);
+
+            this.CenterMapOnTrack(track);
+        }
+
+        private async void CenterMapOnTrack(Track track)
+        {
+            var scene = MapScene.CreateFromBoundingBox(new GeoboundingBox(track.NorthWestCorner, track.SouthEastCorner));
+
+            await Map.TrySetSceneAsync(scene, MapAnimationKind.Bow);
         }
     }
 }
