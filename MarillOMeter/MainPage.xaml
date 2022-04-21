@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MarillOMeter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:maps="using:Windows.UI.Xaml.Controls.Maps" xmlns:controls="using:MarillOMeter.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -29,7 +29,7 @@
                 <MenuFlyoutItem Name="TrackListBtn" Text="Track List" />
             </MenuBarItem>
         </MenuBar>
-        <SplitView Name="Splitter" DisplayMode="Inline" PanePlacement="Left" Grid.Row="1">
+        <SplitView Name="Splitter" DisplayMode="Inline" PanePlacement="Left" OpenPaneLength="360" Grid.Row="1">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -37,10 +37,6 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Button Name="SidePanelCloseBtn" HorizontalAlignment="Right" Width="30" Height="30">
-                        <Image Source="/Assets/CloseIcon.png" />
-                    </Button>
-                    
                     <Frame Grid.Row="1" Name="SidePane">
                         
                     </Frame>
