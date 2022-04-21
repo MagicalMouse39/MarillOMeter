@@ -12,6 +12,8 @@ namespace MarillOMeter.TrackSources
     {
         public StorageFile File { get; protected set; }
 
+        public string TrackName { get; protected set; }
+
         public List<BasicGeoposition> Positions { get; private set; }
 
         public TrackSourceBase(StorageFile file)

@@ -1,4 +1,5 @@
-﻿using MarillOMeter.TrackSources;
+﻿using MarillOMeter.Models;
+using MarillOMeter.TrackSources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,8 +29,12 @@ namespace MarillOMeter
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private List<Track> tracks;
+
         public MainPage()
         {
+            this.tracks = new List<Track>();
+
             this.InitializeComponent();
 
             this.FileExitBtn.Click += (s, e) =>
@@ -46,16 +51,12 @@ namespace MarillOMeter
                 this.MapStyleBtn.Items.Add(styleBtn);
             }
 
-            this.TestMapRoute();
+            this.FileOpenBtn.Click += (s, e) =>
+                this.LoadTrack();
         }
 
-        private async void TestMapRoute()
+        private async void LoadTrack()
         {
-            var polyline = new MapPolyline();
-            polyline.StrokeColor = Colors.Red;
-            polyline.StrokeThickness = 3;
-
-
             FileOpenPicker picker = new FileOpenPicker();
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.FileTypeFilter.Add(".gpx");
@@ -64,9 +65,16 @@ namespace MarillOMeter
 
             var trackSource = new GpxTrackSource(file);
 
+            var polyline = new MapPolyline();
+            polyline.StrokeColor = Colors.Red;
+            polyline.StrokeThickness = 3;
             polyline.Path = new Geopath(trackSource.Positions);
 
+            var track = new Track(trackSource.TrackName, polyline);
+
             Map.MapElements.Add(polyline);
+
+            this.tracks.Add(track);
         }
     }
 }

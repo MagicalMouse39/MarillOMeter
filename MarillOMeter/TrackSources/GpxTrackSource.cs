@@ -25,6 +25,8 @@ namespace MarillOMeter.TrackSources
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
             nsmgr.AddNamespace("x", "http://www.topografix.com/GPX/1/1");
 
+            this.TrackName = doc.SelectSingleNode("//x:name", nsmgr).Value;
+
             var nodes = doc.SelectNodes("//x:trkpt", nsmgr);
 
             foreach (XmlNode node in nodes)
