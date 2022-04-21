@@ -72,14 +72,38 @@ namespace MarillOMeter
                     break;
             }
 
+            var layer = new MapElementsLayer();
+
             var polyline = new MapPolyline();
             polyline.StrokeColor = Colors.Red;
             polyline.StrokeThickness = 3;
             polyline.Path = new Geopath(trackSource.Positions);
 
-            var track = new Track(trackSource.TrackName, polyline);
+            var track = new Track(trackSource.TrackName, layer, polyline);
 
-            Map.MapElements.Add(polyline);
+            layer.MapElements.Add(polyline);
+
+            var startPointIcon = new MapIcon
+            {
+                Location = new Geopoint(track.StartPoint),
+                NormalizedAnchorPoint = new Point(0.5, 1.0),
+                ZIndex = 0,
+                Title = $"Start: {track.Name}"
+            };
+
+            var endPointIcon = new MapIcon
+            {
+                Location = new Geopoint(track.EndPoint),
+                NormalizedAnchorPoint = new Point(0.5, 1.0),
+                ZIndex = 0,
+                Title = $"End: {track.Name}"
+            };
+
+
+            layer.MapElements.Add(startPointIcon);
+            layer.MapElements.Add(endPointIcon);
+
+            Map.Layers.Add(layer);
 
             this.tracks.Add(track);
 

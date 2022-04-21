@@ -16,11 +16,17 @@ namespace MarillOMeter.Models
         
         public MapPolyline Polyline { get; set; }
 
+        public MapElementsLayer ElementsLayer { get; set; }
+
         public BasicGeoposition NorthWestCorner { get; set; }
 
         public BasicGeoposition SouthEastCorner { get; set; }
 
-        public Track(string name, MapPolyline polyline)
+        public BasicGeoposition StartPoint { get; set; }
+
+        public BasicGeoposition EndPoint { get; set; }
+
+        public Track(string name, MapElementsLayer layer, MapPolyline polyline)
         {
             this.Name = name;
             this.Polyline = polyline;
@@ -44,6 +50,9 @@ namespace MarillOMeter.Models
 
             this.SouthEastCorner = new BasicGeoposition() { Latitude = latMin, Longitude = lonMin };
             this.NorthWestCorner = new BasicGeoposition() { Latitude = latMax, Longitude = lonMax };
+
+            this.StartPoint = polyline.Path.Positions.First();
+            this.EndPoint = polyline.Path.Positions.Last();
         }
     }
 }
