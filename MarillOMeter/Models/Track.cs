@@ -31,7 +31,18 @@ namespace MarillOMeter.Models
 
         public bool IsEdited { get; set; } = false;
 
-        public MapPolyline Polyline { get; set; }
+        private MapPolyline polyline;
+
+        public MapPolyline Polyline
+        {
+            get =>
+                this.polyline;
+            set
+            {
+                this.polyline = value;
+                this.GenerateBoundaries();
+            }
+        }
 
         public MapElementsLayer ElementsLayer { get; set; }
 
@@ -43,18 +54,31 @@ namespace MarillOMeter.Models
 
         public BasicGeoposition EndPoint { get; set; }
 
-        public Track(string name, Brush color, MapElementsLayer layer, MapPolyline polyline)
+        public Track(string name, Brush color)
         {
             this.visible = true;
 
             this.Name = name;
             this.Color = color;
-            this.ElementsLayer = layer;
+        }
+
+        public Track(string name, Brush color, MapPolyline polyline, MapElementsLayer layer)
+        {
+            this.visible = true;
+
+            this.Name = name;
+            this.Color = color;
             this.Polyline = polyline;
+            this.ElementsLayer = layer;
 
-            double latMax = 0, latMin = polyline.Path.Positions[0].Latitude, lonMax = 0, lonMin = polyline.Path.Positions[0].Longitude;
+            this.GenerateBoundaries();
+        }
 
-            foreach (var leg in polyline.Path.Positions)
+        private void GenerateBoundaries()
+        {
+            double latMax = 0, latMin = this.polyline.Path.Positions[0].Latitude, lonMax = 0, lonMin = this.polyline.Path.Positions[0].Longitude;
+
+            foreach (var leg in this.polyline.Path.Positions)
             {
                 if (leg.Latitude > latMax)
                     latMax = leg.Latitude;
@@ -72,8 +96,8 @@ namespace MarillOMeter.Models
             this.SouthEastCorner = new BasicGeoposition() { Latitude = latMin, Longitude = lonMin };
             this.NorthWestCorner = new BasicGeoposition() { Latitude = latMax, Longitude = lonMax };
 
-            this.StartPoint = polyline.Path.Positions.First();
-            this.EndPoint = polyline.Path.Positions.Last();
+            this.StartPoint = this.polyline.Path.Positions.First();
+            this.EndPoint = this.polyline.Path.Positions.Last();
         }
     }
 }

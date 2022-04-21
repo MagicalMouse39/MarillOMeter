@@ -1,6 +1,7 @@
 ﻿using MarillOMeter.Models;
 using MarillOMeter.Pages;
 using MarillOMeter.TrackSources;
+using MarillOMeter.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,9 +35,13 @@ namespace MarillOMeter
     {
         public static MainPage Instance;
 
+        public bool IsEditing { get; set; } = false;
+
         internal ObservableCollection<Track> Tracks;
 
         private Random rand;
+
+        private Track editingTrack;
 
         public MainPage()
         {
@@ -71,6 +76,26 @@ namespace MarillOMeter
             };
         }
 
+        internal void EditTrack(Track track)
+        {
+            this.IsEditing = true;
+
+            this.editingTrack = track;
+            this.editingTrack.IsEdited = true;
+            if (this.editingTrack.Polyline != null)
+                this.editingTrack.Polyline.StrokeDashed = true;
+        }
+
+        internal void FinishEditTrack()
+        {
+            this.IsEditing = false;
+            
+            if (this.editingTrack.Polyline != null)
+                this.editingTrack.Polyline.StrokeDashed = false;
+
+            this.editingTrack = null;
+        }
+
         public void CloseSidePane() =>
             this.Splitter.IsPaneOpen = false;
 
@@ -90,6 +115,17 @@ namespace MarillOMeter
                 if (cmd.Label == "No")
                     return;
             }
+
+            if (track == this.editingTrack)
+            {
+                this.FinishEditTrack();
+                
+                var trackListPage = this.SidePane.Content as TrackListPage;
+                if (trackListPage == null)
+                    return;
+                trackListPage.FinishEditTrack();
+            }
+
             this.Map.Layers.Remove(track.ElementsLayer);
             this.Tracks.RemoveAt(index);
         }
@@ -111,11 +147,9 @@ namespace MarillOMeter
                     break;
             }
 
-            byte[] b = new byte[3];
-            this.rand.NextBytes(b);
-            Color color = Color.FromArgb(255, (byte)(b[0] * 1.5), (byte)(b[1] * 1.5), (byte)(b[2] * 1.5));
-
             var layer = new MapElementsLayer();
+
+            var color = ColorUtils.RandomBrightColor();
 
             var polyline = new MapPolyline();
             polyline.StrokeColor = color;
@@ -131,7 +165,7 @@ namespace MarillOMeter
                 name = $"{name} {i}";
             }
 
-            var track = new Track(name, new SolidColorBrush(color), layer, polyline);
+            var track = new Track(name, new SolidColorBrush(color), polyline, layer);
 
             layer.MapElements.Add(polyline);
 

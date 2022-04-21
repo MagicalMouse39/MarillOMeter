@@ -21,8 +21,8 @@
                 <AppBarButton Name="DelTrackBtn" IsEnabled="False" Icon="Delete" Label="Delete" />
             </controls:DownwardsCommandBar.PrimaryCommands>
             <controls:DownwardsCommandBar.SecondaryCommands>
-                <AppBarButton Name="ShowTracksBtn" Icon="MapPin" Label="Show" />
-                <AppBarButton Name="HideTracksBtn" Icon="Cancel" Label="Hide" />
+                <AppBarButton Name="CopyTrackBtn" Icon="Copy" Label="Copy" />
+                <AppBarButton Name="RenameTracksBtn" Icon="Rename" Label="Rename" />
             </controls:DownwardsCommandBar.SecondaryCommands>
         </controls:DownwardsCommandBar>
         <ListView Name="TrackList" Grid.Row="1">
@@ -41,13 +41,10 @@
                         </Grid.ColumnDefinitions>
                         <Rectangle Grid.Column="0" Fill="{Binding Color}" StrokeThickness="0" Width="20" />
                         <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="10,0,0,0" />
-                        <CheckBox Grid.Column="2" IsChecked="{Binding IsVisible}" AccessKey="{Binding Name}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0" MinWidth="0" Checked="OnCheckBoxCheckChanged" Unchecked="OnCheckBoxCheckChanged" />
+                        <ToggleSwitch Grid.Column="2" IsOn="{Binding IsVisible}" AccessKey="{Binding Name}" Margin="100,0,0,0" MinWidth="0" OnContent="" OffContent="" Toggled="OnSwitchToggle" Width="50" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Items>
-                <x:String>ciao</x:String>
-            </ListView.Items>
         </ListView>
     </Grid>
 </Page>
