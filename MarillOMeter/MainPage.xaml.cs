@@ -53,6 +53,9 @@ namespace MarillOMeter
 
             this.FileOpenBtn.Click += (s, e) =>
                 this.LoadTrackFile();
+
+            this.TrackListBtn.Click += (s, e) =>
+                this.Splitter.IsPaneOpen = true;
         }
 
         private async void LoadTrackFile()

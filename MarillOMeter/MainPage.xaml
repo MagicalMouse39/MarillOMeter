@@ -25,7 +25,28 @@
                 <MenuFlyoutItem Name="MapResetBtn" Text="Reset" />
                 <MenuFlyoutSubItem Name="MapStyleBtn" Text="Style" />
             </MenuBarItem>
+            <MenuBarItem Title="Tracks">
+                <MenuFlyoutItem Name="TrackListBtn" Text="Track List" />
+            </MenuBarItem>
         </MenuBar>
-        <maps:MapControl Name="Map" Grid.Row="1" RelativePanel.Below="Menu" Height="Auto" Width="Auto" MapServiceToken="REMOVED" Style="Aerial3DWithRoads" />
+        <SplitView Name="Splitter" DisplayMode="Inline" PanePlacement="Left" Grid.Row="1">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Button Name="SidePanelCloseBtn" HorizontalAlignment="Right" Width="30" Height="30">
+                        <Image Source="/Assets/CloseIcon.png" />
+                    </Button>
+                    
+                    <Frame Grid.Row="1" Name="SidePane">
+                        
+                    </Frame>
+                </Grid>
+            </SplitView.Pane>
+            <maps:MapControl Name="Map" Grid.Row="1" RelativePanel.Below="Menu" Height="Auto" Width="Auto" MapServiceToken="REMOVED" Style="Aerial3DWithRoads" />
+        </SplitView>
     </Grid>
 </Page>
