@@ -1,10 +1,17 @@
-﻿using System;
+﻿using MarillOMeter.TrackSources;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Services.Maps;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
@@ -38,6 +45,28 @@ namespace MarillOMeter
                     this.Map.Style = style;
                 this.MapStyleBtn.Items.Add(styleBtn);
             }
+
+            this.TestMapRoute();
+        }
+
+        private async void TestMapRoute()
+        {
+            var polyline = new MapPolyline();
+            polyline.StrokeColor = Colors.Red;
+            polyline.StrokeThickness = 3;
+
+
+            FileOpenPicker picker = new FileOpenPicker();
+            picker.SuggestedStartLocation = PickerLocationId.Downloads;
+            picker.FileTypeFilter.Add(".gpx");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+
+            var trackSource = new GpxTrackSource(file);
+
+            polyline.Path = new Geopath(trackSource.Positions);
+
+            Map.MapElements.Add(polyline);
         }
     }
 }
