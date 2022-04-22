@@ -60,11 +60,6 @@ namespace MarillOMeter.Pages
 
             this.DelTrackBtn.Click += (s, e) =>
             {
-                if (MainPage.Instance.IsEditing)
-                {
-
-                }
-
                 if (this.TrackList.SelectedItems.Count <= 0)
                     return;
 
