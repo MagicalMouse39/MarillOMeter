@@ -1,0 +1,5 @@
+Track editing:
+ - Cut to nearest end
+ - Cut to other point
+ - Move points
+ - Add point between two points
