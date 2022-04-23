@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarillOMeter.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -27,8 +28,11 @@ namespace MarillOMeter.Controls
 
         private bool isPointerDown;
 
-        public RectD Selection =>
-                new RectD(this.LeftCol.Width.Value, this.TopRow.Height.Value, this.CentralCol.Width.Value, this.CentralRow.Height.Value);
+        public Vector4D Selection =>
+                new Vector4D(this.LeftCol.Width.Value, this.TopRow.Height.Value, this.CentralCol.Width.Value, this.CentralRow.Height.Value);
+
+        public Vector2P SelectionPoints =>
+            new Vector2P(new Point(this.LeftCol.Width.Value, this.TopRow.Height.Value), new Point(this.CentralCol.Width.Value, this.CentralRow.Height.Value));
 
         public RectangleSelector()
         {

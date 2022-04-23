@@ -1,4 +1,5 @@
 ﻿using MarillOMeter.Controls;
+using MarillOMeter.Extensions;
 using MarillOMeter.Models;
 using MarillOMeter.Pages;
 using MarillOMeter.TrackSources;
@@ -17,6 +18,7 @@ using Windows.Foundation.Collections;
 using Windows.Services.Maps;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -79,6 +81,19 @@ namespace MarillOMeter
 
             this.MapSelection.PointerReleased += (s, e) =>
                 this.EditSelection();
+
+            this.Map.MapTapped += (s, e) =>
+            {
+                foreach (var el in from el in this.Map.MapElements where el is MapIcon select el as MapIcon)
+                    el.Image = null;
+            };
+
+            this.Map.MapElementClick += (s, e) =>
+            {
+                foreach (var icon in from el in e.MapElements where el is MapIcon select el as MapIcon)
+                    new MessageDialog(icon.Title).ShowAsync();
+                    //icon.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/SelectedIcon.png"));
+            };
         }
 
         internal void EditTrack(Track track)
@@ -86,12 +101,36 @@ namespace MarillOMeter
             this.IsEditing = true;
             this.editingTrack = track;
 
-            this.MapSelection.Show();
+            foreach (var leg in this.editingTrack.Polyline.Path.Positions)
+                this.Map.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
         }
 
         internal void EditSelection()
         {
             this.editingTrack.IsEdited = true;
+
+            var points = this.MapSelection.SelectionPoints;
+
+            Geopoint topleft, bottomright;
+
+            if (!this.Map.TryGetLocationFromOffset(points.X, out topleft))
+                return;
+            if (!this.Map.TryGetLocationFromOffset(points.Y, out bottomright))
+                return;
+
+            // new MessageDialog($"{topleft.Position.Latitude}-{topleft.Position.Longitude} # {bottomright.Position.Latitude}-{bottomright.Position.Longitude}").ShowAsync();
+
+            /*
+            foreach (var leg in from leg in this.editingTrack.Polyline.Path.Positions where leg.IsInArea(topleft.Position, bottomright.Position) select leg)
+            {
+                var pin = new Button();
+                this.Map.Children.Add(pin);
+                MapControl.SetLocation(pin, new Geopoint(leg));
+            }
+            */
+
+
+
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = true;
         }
