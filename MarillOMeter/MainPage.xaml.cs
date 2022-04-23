@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -75,14 +76,21 @@ namespace MarillOMeter
                 this.Splitter.IsPaneOpen = true;
                 this.SidePane.Content = new TrackListPage();
             };
+
+            this.MapSelection.PointerReleased += (s, e) =>
+                this.EditSelection();
         }
 
         internal void EditTrack(Track track)
         {
             this.IsEditing = true;
-            this.MapSelection.Visibility = Visibility.Visible;
-
             this.editingTrack = track;
+
+            this.MapSelection.Show();
+        }
+
+        internal void EditSelection()
+        {
             this.editingTrack.IsEdited = true;
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = true;
@@ -91,7 +99,6 @@ namespace MarillOMeter
         internal void FinishEditTrack()
         {
             this.IsEditing = false;
-            this.MapSelection.Visibility = Visibility.Collapsed;
 
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = false;

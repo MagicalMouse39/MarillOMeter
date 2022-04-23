@@ -43,7 +43,7 @@
                 </Grid>
             </SplitView.Pane>
             <Grid>
-                <controls:RectangleSelector x:Name="MapSelection" Canvas.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <controls:RectangleSelector x:Name="MapSelection" Visibility="Collapsed" Canvas.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                 <maps:MapControl Name="Map" Style="Aerial3DWithRoads" MapServiceToken="REMOVED" />
             </Grid>
         </SplitView>

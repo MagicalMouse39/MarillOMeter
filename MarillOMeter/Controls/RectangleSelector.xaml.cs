@@ -27,6 +27,9 @@ namespace MarillOMeter.Controls
 
         private bool isPointerDown;
 
+        public RectD Selection =>
+                new RectD(this.LeftCol.Width.Value, this.TopRow.Height.Value, this.CentralCol.Width.Value, this.CentralRow.Height.Value);
+
         public RectangleSelector()
         {
             this.isPointerDown = false;
@@ -78,7 +81,14 @@ namespace MarillOMeter.Controls
 
                 this.CentralCol.Width = new GridLength(0);
                 this.CentralRow.Height = new GridLength(0);
+
+                this.Visibility = Visibility.Collapsed;
             };
+        }
+
+        public void Show()
+        {
+            this.Visibility = Visibility.Visible;
         }
     }
 }
