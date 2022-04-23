@@ -57,16 +57,16 @@ namespace MarillOMeter.Controls
 
                 if (deltaY < 0)
                 {
-                    this.TopRow.Height = new GridLength(Math.Abs(deltaY));
-                    this.CentralRow.Height = new GridLength(this.startPoint.Y - Math.Abs(deltaY));
+                    this.TopRow.Height = new GridLength(point.Y);
+                    this.CentralRow.Height = new GridLength(this.startPoint.Y - point.Y);
                 }
                 else
                     this.CentralRow.Height = new GridLength(deltaY);
 
                 if (deltaX < 0)
                 {
-                    this.LeftCol.Width = new GridLength(Math.Abs(deltaX));
-                    this.CentralCol.Width = new GridLength(this.startPoint.X - Math.Abs(deltaX));
+                    this.LeftCol.Width = new GridLength(point.X);
+                    this.CentralCol.Width = new GridLength(this.startPoint.X - point.X);
                 }
                 else
                     this.CentralCol.Width = new GridLength(deltaX);
