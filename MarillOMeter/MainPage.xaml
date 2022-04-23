@@ -38,11 +38,14 @@
                     </Grid.RowDefinitions>
 
                     <Frame Grid.Row="1" Name="SidePane">
-                        
+
                     </Frame>
                 </Grid>
             </SplitView.Pane>
-            <maps:MapControl Name="Map" Grid.Row="1" RelativePanel.Below="Menu" Height="Auto" Width="Auto" MapServiceToken="REMOVED" Style="Aerial3DWithRoads" />
+            <Grid>
+                <controls:RectangleSelector x:Name="MapSelection" Canvas.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <maps:MapControl Name="Map" Style="Aerial3DWithRoads" MapServiceToken="REMOVED" />
+            </Grid>
         </SplitView>
     </Grid>
 </Page>

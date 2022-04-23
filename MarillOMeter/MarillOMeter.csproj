@@ -123,6 +123,9 @@
     <Compile Include="Controls\MovableMapPin.xaml.cs">
       <DependentUpon>MovableMapPin.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RectangleSelector.xaml.cs">
+      <DependentUpon>RectangleSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -155,6 +158,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Controls\MovableMapPin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RectangleSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

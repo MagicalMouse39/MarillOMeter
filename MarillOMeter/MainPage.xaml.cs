@@ -1,10 +1,12 @@
-﻿using MarillOMeter.Models;
+﻿using MarillOMeter.Controls;
+using MarillOMeter.Models;
 using MarillOMeter.Pages;
 using MarillOMeter.TrackSources;
 using MarillOMeter.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -35,19 +37,18 @@ namespace MarillOMeter
     {
         public static MainPage Instance;
 
-        public bool IsEditing { get; set; } = false;
+        private Track editingTrack;
+        
+        private Point selectionStart;
 
         internal ObservableCollection<Track> Tracks;
 
-        private Random rand;
-
-        private Track editingTrack;
+        public bool IsEditing { get; set; } = false;
 
         public MainPage()
         {
             MainPage.Instance = this;
 
-            this.rand = new Random();
             this.Tracks = new ObservableCollection<Track>();
 
             this.InitializeComponent();
@@ -79,6 +80,7 @@ namespace MarillOMeter
         internal void EditTrack(Track track)
         {
             this.IsEditing = true;
+            this.MapSelection.Visibility = Visibility.Visible;
 
             this.editingTrack = track;
             this.editingTrack.IsEdited = true;
@@ -89,7 +91,8 @@ namespace MarillOMeter
         internal void FinishEditTrack()
         {
             this.IsEditing = false;
-            
+            this.MapSelection.Visibility = Visibility.Collapsed;
+
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = false;
 
@@ -188,6 +191,13 @@ namespace MarillOMeter
 
             layer.MapElements.Add(startPointIcon);
             layer.MapElements.Add(endPointIcon);
+
+            /*
+            foreach (var leg in track.Polyline.Path.Positions)
+            {
+                layer.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
+            }
+            */
 
             Map.Layers.Add(layer);
 
