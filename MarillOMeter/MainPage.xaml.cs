@@ -101,8 +101,11 @@ namespace MarillOMeter
             this.IsEditing = true;
             this.editingTrack = track;
 
+            if (this.editingTrack.Polyline != null)
+                this.editingTrack.Polyline.StrokeDashed = true;
+
             foreach (var leg in this.editingTrack.Polyline.Path.Positions)
-                this.Map.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
+                this.editingTrack.ElementsLayer.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
         }
 
         internal void EditSelection()
