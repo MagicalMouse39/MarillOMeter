@@ -44,36 +44,13 @@ namespace MarillOMeter
 
         private MapIcon selectedElement;
 
-        private System.Timers.Timer mouseTimer;
-
         internal ObservableCollection<Track> Tracks;
 
         public bool IsEditing { get; set; } = false;
 
-        public event EventHandler<Point> PointerMovedOverride;
-
         public MainPage()
         {
             MainPage.Instance = this;
-
-            this.PointerMovedOverride += (s, e) =>
-            {
-                
-            };
-
-            this.mouseTimer = new System.Timers.Timer();
-            this.mouseTimer.Elapsed += (s, e) =>
-            {
-                if (Windows.UI.Core.CoreWindow.GetForCurrentThread() == null)
-                    return;
-
-                var pos = Windows.UI.Core.CoreWindow.GetForCurrentThread().PointerPosition;
-                var mousePos = new Point(pos.X - Window.Current.Bounds.X, pos.Y - Window.Current.Bounds.Y);
-
-                this.PointerMovedOverride.Invoke(this, mousePos);
-            };
-            this.mouseTimer.Interval = 30;
-            this.mouseTimer.Start();
 
             this.Tracks = new ObservableCollection<Track>();
 
@@ -104,9 +81,10 @@ namespace MarillOMeter
 
             this.Map.MapTapped += (s, e) =>
             {
+                /*
                 foreach (var el in from el in this.Map.MapElements where el is MapIcon select el as MapIcon)
                     el.Image = null;
-
+                */
                 this.selectedElement = null;
             };
 
@@ -123,10 +101,24 @@ namespace MarillOMeter
                 this.selectedElement.Image = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx:///Assets/StoreLogo.png"));
             };
 
-            // this.Map.MapHolding
+            /*
+            this.Map.MapRightTapped += (s, e) =>
+            {
+                if (this.editingTrack == null)
+                    return;
 
-            this.InkCanvas.PointerMoved += (s, e) =>
-                new MessageDialog("sadasd").ShowAsync();
+                var pos = Windows.UI.Core.CoreWindow.GetForCurrentThread().PointerPosition;
+                var mousePos = new Point(pos.X - Window.Current.Bounds.X, pos.Y - Window.Current.Bounds.Y);
+
+                this.editingTrack.SummonIconsNearby(this.Map, mousePos, .1);
+            };
+            */
+            /*
+            this.Map.MapHolding += (s, e) =>
+            {
+                new MessageDialog("Holding tight").ShowAsync();
+            };
+            */
         }
 
         internal void EditTrack(Track track)
@@ -137,8 +129,7 @@ namespace MarillOMeter
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = true;
 
-            foreach (var leg in this.editingTrack.Polyline.Path.Positions)
-                this.editingTrack.ElementsLayer.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
+            // TODO: Add mouse box "move the pointer to view the pins"
         }
 
         internal void EditSelection()
@@ -178,9 +169,7 @@ namespace MarillOMeter
             if (this.editingTrack.Polyline != null)
                 this.editingTrack.Polyline.StrokeDashed = false;
 
-            this.editingTrack.ElementsLayer.MapElements.Clear();
-            this.editingTrack.ElementsLayer.MapElements.Add(this.editingTrack.Polyline);
-            this.AddStartEndPins(this.editingTrack);
+            this.editingTrack.ResetMovablePins();
 
             this.editingTrack = null;
         }
@@ -217,32 +206,6 @@ namespace MarillOMeter
 
             this.Map.Layers.Remove(track.ElementsLayer);
             this.Tracks.RemoveAt(index);
-        }
-
-        /// <summary>
-        /// Add Start and End <see cref="MapIcon"/> to the <paramref name="track"/>
-        /// </summary>
-        /// <param name="track">Track to which Start and End pin have to be added</param>
-        internal void AddStartEndPins(Track track)
-        {
-            var startPointIcon = new MapIcon
-            {
-                Location = new Geopoint(track.StartPoint),
-                NormalizedAnchorPoint = new Point(0.5, 1.0),
-                ZIndex = 0,
-                Title = $"Start: {track.Name}"
-            };
-
-            var endPointIcon = new MapIcon
-            {
-                Location = new Geopoint(track.EndPoint),
-                NormalizedAnchorPoint = new Point(0.5, 1.0),
-                ZIndex = 0,
-                Title = $"End: {track.Name}"
-            };
-
-            track.ElementsLayer.MapElements.Add(startPointIcon);
-            track.ElementsLayer.MapElements.Add(endPointIcon);
         }
 
         internal async void LoadTrackFile()
@@ -285,17 +248,6 @@ namespace MarillOMeter
 
             var track = new Track(name, new SolidColorBrush(color), polyline, layer);
 
-            layer.MapElements.Add(polyline);
-
-            this.AddStartEndPins(track);
-
-            /*
-            foreach (var leg in track.Polyline.Path.Positions)
-            {
-                layer.MapElements.Add(new MapIcon() { Location = new Geopoint(leg) });
-            }
-            */
-
             Map.Layers.Add(layer);
 
             this.Tracks.Add(track);
@@ -303,7 +255,7 @@ namespace MarillOMeter
             this.CenterMapOnTrack(track);
         }
 
-        private async void CenterMapOnTrack(Track track)
+        internal async void CenterMapOnTrack(Track track)
         {
             var scene = MapScene.CreateFromBoundingBox(new GeoboundingBox(track.NorthWestCorner, track.SouthEastCorner));
 

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
+using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Media;
 
@@ -13,6 +15,8 @@ namespace MarillOMeter.Models
     internal class Track
     {
         private bool visible;
+
+        private Queue<MapIcon> movablePins;
 
         public string Name { get; set; }
         
@@ -62,9 +66,15 @@ namespace MarillOMeter.Models
             this.Color = color;
         }
 
-        public Track(string name, Brush color, MapPolyline polyline, MapElementsLayer layer)
+        public Track(string name, Brush color, MapPolyline polyline, MapElementsLayer layer) : this(name, color, polyline, layer, true)
+        {
+            
+        }
+
+        public Track(string name, Brush color, MapPolyline polyline, MapElementsLayer layer, bool addStartEndPins)
         {
             this.visible = true;
+            this.movablePins = new Queue<MapIcon>();
 
             this.Name = name;
             this.Color = color;
@@ -72,6 +82,77 @@ namespace MarillOMeter.Models
             this.ElementsLayer = layer;
 
             this.GenerateBoundaries();
+
+            this.ElementsLayer.MapElements.Add(polyline);
+
+            if (addStartEndPins)
+                this.AddStartEndPins();
+        }
+
+        /// <summary>
+        /// Delete and dispose all the movable pins
+        /// </summary>
+        public void ResetMovablePins()
+        {
+            while (this.movablePins.Count > 0)
+            {
+                var pin = this.movablePins.Dequeue();
+                this.ElementsLayer.MapElements.Remove(pin);
+                pin = null;
+            }
+            GC.Collect();
+        }
+
+
+        /// <summary>
+        /// Add Start and End <see cref="MapIcon"/> to the track
+        /// </summary>
+        public void AddStartEndPins()
+        {
+            var startPointIcon = new MapIcon
+            {
+                Location = new Geopoint(this.StartPoint),
+                NormalizedAnchorPoint = new Point(0.5, 1.0),
+                ZIndex = 0,
+                Title = $"Start: {this.Name}"
+            };
+
+            var endPointIcon = new MapIcon
+            {
+                Location = new Geopoint(this.EndPoint),
+                NormalizedAnchorPoint = new Point(0.5, 1.0),
+                ZIndex = 0,
+                Title = $"End: {this.Name}"
+            };
+
+            this.ElementsLayer.MapElements.Add(startPointIcon);
+            this.ElementsLayer.MapElements.Add(endPointIcon);
+        }
+
+        public void SummonIconsNearby(MapControl map, Point point, double radius)
+        {
+            this.ResetMovablePins();
+            
+            Geopoint pos;
+
+            if (!map.TryGetLocationFromOffset(point, out pos))
+                return;
+
+            new MessageDialog($"Lat: {pos.Position.Latitude}; Long: {pos.Position.Longitude}").ShowAsync();
+
+            foreach (var leg in this.polyline.Path.Positions)
+            {
+                if (Math.Abs(pos.Position.Latitude - leg.Latitude) <= radius &&
+                    Math.Abs(pos.Position.Longitude - leg.Longitude) <= radius)
+                {
+                    var icon = new MapIcon()
+                    {
+                        Location = new Geopoint(leg) 
+                    };
+                    this.ElementsLayer.MapElements.Add(icon);
+                    this.movablePins.Enqueue(icon);
+                }
+            }
         }
 
         private void GenerateBoundaries()

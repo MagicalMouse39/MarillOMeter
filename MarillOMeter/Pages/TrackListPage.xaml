@@ -21,8 +21,9 @@
                 <AppBarButton Name="DelTrackBtn" IsEnabled="False" Icon="Delete" Label="Delete" />
             </controls:DownwardsCommandBar.PrimaryCommands>
             <controls:DownwardsCommandBar.SecondaryCommands>
-                <AppBarButton Name="CopyTrackBtn" Icon="Copy" Label="Copy" />
-                <AppBarButton Name="RenameTracksBtn" Icon="Rename" Label="Rename" />
+                <AppBarButton Name="CopyTrackBtn" IsEnabled="False" Icon="Copy" Label="Copy" />
+                <AppBarButton Name="RenameTracksBtn" IsEnabled="False" Icon="Rename" Label="Rename" />
+                <AppBarButton Name="CenterOnTrackBtn" IsEnabled="False" Icon="Target" Label="Center on Track" />
             </controls:DownwardsCommandBar.SecondaryCommands>
         </controls:DownwardsCommandBar>
         <ListView Name="TrackList" Grid.Row="1">

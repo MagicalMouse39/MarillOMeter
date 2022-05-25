@@ -71,11 +71,16 @@ namespace MarillOMeter.Pages
             this.TrackList.SelectionChanged += (s, e) =>
             {
                 this.DelTrackBtn.IsEnabled = this.TrackList.SelectedItems.Count > 0;
-                
+
                 if (MainPage.Instance.IsEditing)
                     return;
-                
-                this.EditTrackBtn.IsEnabled = this.TrackList.SelectedItems.Count == 1;
+
+                var trigger = this.TrackList.SelectedItems.Count == 1;
+
+                this.EditTrackBtn.IsEnabled = trigger;
+                this.RenameTracksBtn.IsEnabled = trigger;
+                this.CopyTrackBtn.IsEnabled = trigger;
+                this.CenterOnTrackBtn.IsEnabled = trigger;
             };
 
             this.CopyTrackBtn.Click += async (s, e) =>
@@ -89,6 +94,9 @@ namespace MarillOMeter.Pages
                 track.Name = name;
                 MainPage.Instance.Tracks.Add(track);
             };
+
+            this.CenterOnTrackBtn.Click += (s, e) =>
+                MainPage.Instance.CenterMapOnTrack(MainPage.Instance.Tracks[this.TrackList.SelectedIndex]);
 
             if (MainPage.Instance.IsEditing)
                 this.StartEditTrack();
